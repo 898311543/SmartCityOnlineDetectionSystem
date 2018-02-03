@@ -1,0 +1,1040 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>历史数据</title>
+    <link rel="stylesheet" type="text/css" href="/Public/resource/css/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/Public/resource/css/icon.css"/>
+    <link rel="stylesheet" type="text/css" href="/Public/resource/css/demo.css"/>
+    <style type="text/css">
+        body{
+            background-color: transparent;
+            height: 800px;
+        }
+        .easyui-layout{
+            background-color: transparent;
+        }
+        .panel-body{
+            background-color: transparent;
+        }
+        .tabs-header{
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="easyui-layout" fit="true" style="overflow:hidden">
+    <div id="top" region="north" style="padding:0px 0 0 1px;height:35px;overflow:hidden">
+        <table width="100%">
+            <tr>
+                <td>
+                    <label style="vertical-align:middle">地点</label>
+                    <select id="location_id">
+                        <volist name="device" id="vo" key="k">
+                            <option value ="{$vo.hard_id}">{$vo.detail}</option>
+                        </volist>
+                    </select>
+                    <label style="vertical-align:middle">时间范围</label>
+                    <input id="dtbStartTime" class="easyui-datetimebox"  style="width:125px" data-options="editable:false"/>~
+                    <input id="dtbEndTime" class="easyui-datetimebox" style="width:125px" data-options="editable:false"/>
+                    <a id="btnSearch" style="margin:0 0 0 1px" class="easyui-linkbutton" iconCls="icon-search" plain="true"></a>
+                </td>
+                <td align="right">
+                    <div style="border:1px solid #95B8E7;padding:3px 5px;width:122px">
+                        <input type="radio" name="type" value="HOUR" checked="checked" style="vertical-align:middle" onclick="radioSelect()"><label style="vertical-align:middle">小时</label></input>
+                        <input type="radio" name="type" value="DAY" style="vertical-align:middle" onclick="radioSelect()"><label style="vertical-align:middle">日</label></input>
+                        <input type="radio" name="type" value="MONTH" style="vertical-align:middle" onclick="radioSelect()"><label style="vertical-align:middle">月</label></input>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div region="center" style="padding:2px 0 0 0;" border="false" fit="true">
+        <div id="tt" class="easyui-tabs" style="width:auto;height:auto;" fit="true">
+            <div title="综合"  style="padding:5px;">
+                <div class="easyui-layout" fit="true" border="false">
+                    <div region="center" style="padding:0px;" border="false">
+                        <div id="containerALL" style="min-width: 310px; height: 420px; margin: 0 auto"></div>
+                        <span style="color:gray">备注：可以点击下面监测项进行选择查询</span>
+                    </div>
+                </div>
+
+            </div>
+            <div title="PM2.5" style="padding:5px;">
+                <div id="containerPM25" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
+            <div title="PM10"  style="padding:5px;">
+                <div id="containerPM10" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
+
+            <div title="温度"  style="padding:5px;">
+                <div id="containerTemp" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
+            <div title="湿度" style="padding:5px;">
+                <div id="containerHumi" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/Public/javascript/jquery-1.8.0.min.js?v=1.2"></script>
+<script type="text/javascript" src="/Public/javascript/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/Public/javascript/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/Public/javascript/jquery.cookie.js"></script>
+<script type="text/javascript" src="/Public/javascript/public.js"></script>
+<script type="text/javascript" src="/Public/javascript/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="/Public/javascript/highcharts/highcharts-more.js"></script>
+<script type="text/javascript" src="/Public/javascript/highcharts/modules/exporting.js"></script>
+<script type="text/javascript">
+    var city = "监测点";
+    var type ="HOUR";
+    var location_id;
+    var dataAQI = [];
+    var dataPM25 = [];
+    var dataPM10 = [];
+    var dataCO = [];
+    var dataSO2 = [];
+    var dataNO2 = [];
+    var dataO3 = [];
+    var dataRank = [];
+    var dataTemp = [];
+    var dataHumi = [];
+    var dataWind = [];
+    var dataPolar = [];
+    var startTime;
+    var endTime;
+    var curTab = "containerAQI";
+    var curName = "PM2.5";
+    var curData = dataAQI;
+    var state = 0;
+    $(function () {
+        timeSelInit();
+        if($.cookie('dcity')!=null)
+        {
+            city = $.cookie('dcity');
+        }
+
+        getData();
+
+        $("#btnSearch").click(function(){
+            getData();
+        });
+
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+
+        $('#tt').tabs({
+            border:false,
+            onSelect:function(title){
+                showCurrentTab();
+            }
+        });
+
+
+        document.onkeydown = function(e) {
+            var e=event.srcElement;
+            switch(event.keyCode)
+            {
+                case 13:  // 回车
+                    getData();
+                    break;
+            }
+        };
+
+        $('#dtbStartTime').combo('activeTextArrow');
+        $('#dtbEndTime').combo('activeTextArrow');
+        //$('#type').combo('activeTextArrow');
+
+    });
+    var typetext = "小时";
+    function radioSelect()
+    {
+        timeSelInit();
+
+        if(type=="HOUR")
+        {
+            typetext = "小时";
+        }
+        if(type=="DAY")
+        {
+            typetext ="日";
+        }
+        else if(type=="MONTH")
+        {
+            typetext = "月";
+        }
+        getData();
+    }
+
+
+    var ratioArray = [];
+    function calDataArray(dataArray,point)
+    {
+        if(dataArray.length==0)
+            return;
+        var level1=0, level2=0, level3=0,level4=0,level5=0, level6=0;
+        var max = dataArray[0].y;
+        var min = dataArray[0].y;
+        var avg = dataArray[0].y;
+        var no_null_length = 0;
+        ratioArray.splice(0, ratioArray.length);
+        for(i=1;i<dataArray.length;i++)
+        {
+            if(dataArray[i].y)
+                no_null_length ++;
+            if(max<dataArray[i].y && dataArray[i].y)
+                max = dataArray[i].y;
+            if((min>dataArray[i].y && dataArray[i].y != null)|| min == null)
+                min = dataArray[i].y;
+            avg = avg + dataArray[i].y;
+            if(dataArray[i].y<50)
+            {
+                level1++;
+            }
+            else if(dataArray[i].y<100)
+            {
+                level2++;
+            }
+            else if(dataArray[i].y<150)
+            {
+                level3++;
+            }
+            else if(dataArray[i].y<200)
+            {
+                level4++;
+            }
+            else if(dataArray[i].y<300)
+            {
+                level5++;
+            }
+            else
+            {
+                level6++;
+            }
+        }
+        if(level1>0)
+        {
+            ratioArray.push({
+                name:'优',
+                color:color_green,
+                y:level1
+            });
+        }
+        if(level2>0)
+        {
+            ratioArray.push({
+                name:'良',
+                color:color_yellow,
+                y:level2
+            });
+        }
+        if(level3>0)
+        {
+            ratioArray.push({
+                name:'轻度污染',
+                color:color_orange,
+                y:level3
+            });
+        }
+        if(level4>0)
+        {
+            ratioArray.push({
+                name:'中度污染',
+                color:color_red,
+                y:level4
+            });
+        }
+        if(level5>0)
+        {
+            ratioArray.push({
+                name:'重度污染',
+                color:color_brown,
+                y:level5
+            });
+        }
+        if(level6>0)
+        {
+            ratioArray.push({
+                name:'严重污染',
+                color:color_purple,
+                y:level6
+            });
+        }
+        if(point==null)
+        {
+            point =0;
+        }
+        avg = (avg/no_null_length).toFixed(point);
+        var content = "最小值:" + min + "  平均值:" + avg + "  最大值:" + max;
+        return content;
+    }
+
+    function getServerData(method, object, callback, period) {
+        const key = hex_md5(method + JSON.stringify(object));
+        const data = getDataFromLocalStorage(key, period);
+        if (!data) {
+            var param = getParam(method, object);
+            $.ajax({
+                url: '/index.php/home/api/get_history_data',
+                data: {
+                    "method": method,
+                    "type":object.type,
+                    "startTime":object.startTime,
+                    "endTime":object.endTime,
+                    "location_id":object.location_id
+                },
+                type: "post",
+                success: function(obj) {
+                    console.log(obj);
+                    if (obj.success) {
+                        if (period > 0) {
+                            obj.data.time = new Date().getTime();
+                            localStorageUtil.save(key, obj.data)
+                        }
+                        console.log("result:"+JSON.stringify(obj.result));
+                        callback(obj.data)
+                    } else {
+                        console.log(obj.errcode, obj.errmsg)
+                    }
+                }
+            })
+        } else {
+            callback(data)
+        }
+    }
+
+    function showCurrentTab()
+    {
+        var tab = $('#tt').tabs('getSelected');
+        var title = tab.panel('options').title;
+
+        var content;
+        if(title=="AQI" && dataAQI.length>0)
+        {
+            curTab = "containerAQI";
+            curName = "AQI";
+            curData = dataAQI;
+            content = calDataArray(curData,0);
+            showChart(curTab,curName,content, curData,0,500,valuePlotBaud,"");
+            showPieChart("containerPieAQI",curName,ratioArray);
+        }
+        else if(title=="PM2.5" && dataPM25.length>0)
+        {
+            curTab = "containerPM25";
+            curName = "PM2.5";
+            curData = dataPM25;
+            content = calDataArray(curData,1);
+            showChart(curTab,curName,content, curData,0,null,null,"ug/m3");
+        }
+        else if(title=="PM10" && dataPM10.length>0)
+        {
+            curTab = "containerPM10";
+            curName = "PM10";
+            curData = dataPM10;
+            content = calDataArray(curData,1);
+            showChart(curTab,curName,content, curData,0,null,null,"ug/m3");
+        }
+        else if(title=="CO" && dataCO.length>0)
+        {
+            curTab = "containerCO";
+            curName = "CO";
+            curData = dataCO;
+            content = calDataArray(curData,3);
+            showChart(curTab,curName,content, curData,0,null,null,"mg/m3");
+        }
+        else if(title=="NO2" && dataNO2.length>0)
+        {
+            curTab = "containerNO2";
+            curName = "NO2";
+            curData = dataNO2;
+            content = calDataArray(curData,1);
+            showChart(curTab,curName,content, curData,0,null,null,"ug/m3");
+        }
+        else if(title=="O3" && dataO3.length>0)
+        {
+            curTab = "containerO3";
+            curName = "O3";
+            curData = dataO3;
+            content = calDataArray(curData,1);
+            showChart(curTab,curName,content, curData,0,null,null,"ug/m3");
+        }
+        else if(title=="SO2" && dataSO2.length>0)
+        {
+            curTab = "containerSO2";
+            curName = "SO2";
+            curData = dataSO2;
+            content = calDataArray(curData,1);
+            showChart(curTab,curName,content, curData,0,null,null,"ug/m3");
+        }
+        else if(title=="温度" && dataTemp.length>0)
+        {
+            curTab = "containerTemp";
+            curName = "温度";
+            curData = dataTemp;
+            content = calDataArray(curData,1);
+            showChart(curTab,curName,content, curData,null,null,null,"℃");
+        }
+        else if(title=="湿度" && dataHumi.length>0)
+        {
+            curTab = "containerHumi";
+            curName = "湿度";
+            curData = dataHumi;
+            content = calDataArray(curData,0);
+            showChart(curTab,curName,content, curData,0,null,null,"%");
+        }
+        else if(title=="风级" && dataWind.length>0)
+        {
+            curTab = "containerWind";
+            curName = "风级";
+            curData = dataWind;
+            content = calDataArray(curData,0);
+            showChart(curTab,curName,content, curData,0,null,null,"级");
+        }
+        else if(title=="排名")
+        {
+            curTab = "containerRank";
+            curName = "城市排名";
+            curData = dataRank;
+            content = calDataArray(curData);
+            showChart(curTab,curName,content, curData,0,null,null,"");
+            //showPieChart("containerPieRank",curName,ratioArray);
+        }
+        else if(title=="综合")
+        {
+            showChartALL("containerALL","");
+      //      showPolarChart("containerPolar","监测项",dataPolar);
+        }
+    }
+
+    // time select initialize
+    function timeSelInit()
+    {
+        //type = $('#type').combobox('getValue');
+        type = $('input:radio[name=type]:checked').val();
+        startTime = new Date();
+        if(type=="HOUR")
+        {
+            //startTime.setDate(startTime.getDate() - 1);
+            startTime.setHours(startTime.getHours() - 27);
+            startTime.setMinutes(0);
+        }
+        else if(type=="DAY")
+        {
+            startTime.setMonth(startTime.getMonth() - 1);
+            startTime.setHours(0);
+            startTime.setMinutes(0);
+            startTime.setSeconds(0);
+        }
+        else if(type=="MONTH")
+        {
+            startTime.setMonth(startTime.getMonth() - 12);
+            startTime.setDate(1);
+            startTime.setHours(0);
+            startTime.setMinutes(0);
+            startTime.setSeconds(0);
+        }
+
+        endTime = new Date();
+        endTime.setMinutes(0);
+        endTime.setSeconds(0);
+        $('#dtbStartTime').datetimebox({
+            value: startTime.pattern("yyyy-MM-dd HH:mm"),
+            formatter:timeFormatter,
+            required: true,
+            showSeconds: false
+        });
+        $('#dtbEndTime').datetimebox({
+            value: endTime.pattern("yyyy-MM-dd HH:mm"),
+            formatter:timeFormatter,
+            required: true,
+            showSeconds: false
+        });
+
+    }
+
+    function calAvg(dataArray)
+    {
+        var sum = 0;
+        for(i=0;i<dataArray.length;i++)
+        {
+            sum += dataArray[i].y;
+        }
+        return sum/dataArray.length;
+    }
+
+    // get time selection
+    function getTimeSel()
+    {
+        startTime = (converTimeFormat($('#dtbStartTime').datetimebox('getValue'))).pattern("yyyy-MM-dd HH:mm:ss");
+        endTime = (converTimeFormat($('#dtbEndTime').datetimebox('getValue'))).pattern("yyyy-MM-dd HH:mm:ss");
+
+        reg = new RegExp(":\\d{2}:\\d{2}","gmi");
+        startTime = startTime.replace(reg, ":00:00");
+        endTime = endTime.replace(reg, ":00:00");
+    }
+
+    function getData()
+    {
+        state = 0;
+        city= '检测点';
+        $.cookie('dcity', city, {expires : 30});
+        //type = $('#type').combobox('getValue');
+        type = $('input:radio[name=type]:checked').val();
+        location_id = $("#location_id").val();
+        getTimeSel();
+
+        if(type=="HOUR")
+        {
+            var timediff = converTimeFormat($('#dtbEndTime').datetimebox('getValue')).getTime()-converTimeFormat($('#dtbStartTime').datetimebox('getValue')).getTime();
+            if(timediff >30*24*3600*1000)
+            {
+                showMessage(false,"按小时查询仅支持查询一个月数据，查看长时间变化趋势请选择按日查询！");
+                return ;
+            }
+        }
+        getAQIData();
+  //      getWeatherData();
+    }
+
+
+    function getAQIData()
+    {
+        var method = 'GETDETAIL';
+        var param = {};
+        param.city = city;
+        param.type = type;
+        param.startTime = startTime;
+        param.endTime = endTime;
+        param.location_id = location_id;
+        getServerData(method, param, function(obj) {
+            data = obj;
+            if(data.total>0)
+            {
+                dataAQI.splice(0, dataAQI.length);
+                dataPM25.splice(0, dataPM25.length);
+                dataPM10.splice(0, dataPM10.length);
+                dataCO.splice(0, dataCO.length);
+                dataNO2.splice(0, dataNO2.length);
+                dataO3.splice(0, dataO3.length);
+                dataSO2.splice(0, dataSO2.length);
+                dataRank.splice(0, dataRank.length);
+                dataTemp.splice(0, dataTemp.length);
+                dataHumi.splice(0, dataHumi.length);
+                for(i=0;i<data.rows.length;i++)
+                {
+                    var data_pm25 = null;
+                    var data_pm10 = null;
+                    var data_temp = null;
+                    var data_humid = null;
+                    if(data.rows[i].pm2_5 ){
+                        data_pm25 = parseInt(data.rows[i].pm2_5);
+                        if(data_pm25 == -1)
+                            data_pm25 = null;
+                    }
+                    if(data.rows[i].pm10){
+                        data_pm10 = parseInt(data.rows[i].pm10);
+                        if(data_pm10 == -1)
+                            data_pm10 = null;
+                    }
+                    if(data.rows[i].temp){
+                        data_temp = parseInt(data.rows[i].temp);
+                        if(data_temp == -1)
+                            data_temp = null;
+                    }
+                    if(data.rows[i].humi){
+                        data_humid = parseInt(data.rows[i].humi);
+                        if(data_humid == -1)
+                            data_humid = null;
+                    }
+                    dataPM25.push({
+                        x: converTimeFormat(data.rows[i].time).getTime(),
+                        y: data_pm25
+                    });
+                    dataPM10.push({
+                        x: converTimeFormat(data.rows[i].time).getTime(),
+                        y: data_pm10
+                    });
+                    dataTemp.push({
+                        x: converTimeFormat(data.rows[i].time).getTime(),
+                        y: data_temp
+                    });
+                    dataHumi.push({
+                        x: converTimeFormat(data.rows[i].time).getTime(),
+                        y: data_humid
+                    });
+
+                }
+                dataPolar = [calAvg(dataAQI),calAvg(dataPM25),calAvg(dataPM10),calAvg(dataSO2),calAvg(dataO3),calAvg(dataNO2)];
+                state ++ ;
+                showCurrentTab();
+            }
+        }, 0.5);
+    }
+
+
+
+
+    var alfa = 0.8;
+
+    var valuePlotBaud = [{ // Light air
+        from: 0,
+        to: 50,
+        color: 'rgba(0, 254, 3, ' + alfa + ')',
+        label: {
+            text: '优',
+            style: {
+                color: '#606060'
+            }
+        }
+    }, { // Light breeze
+        from: 50,
+        to: 100,
+        color: 'rgba(254, 245, 0, ' + alfa + ')',
+        label: {
+            text: '良',
+            style: {
+                color: '#606060'
+            }
+        }
+    }, { // Gentle breeze
+        from: 100,
+        to: 150,
+        color: 'rgba(254, 125, 0, ' + alfa + ')',
+        label: {
+            text: '轻度污染',
+            style: {
+                color: '#606060'
+            }
+        }
+    }, { // Moderate breeze
+        from: 150,
+        to: 200,
+        color: 'rgba(255, 3, 3, ' + alfa + ')',
+        label: {
+            text: '中度污染',
+            style: {
+                color: '#606060'
+            }
+        }
+    }, { // Fresh breeze
+        from: 200,
+        to: 300,
+        color: 'rgba(188, 3,205 , ' + alfa + ')',
+        label: {
+            text: '重度污染',
+            style: {
+                color: '#606060'
+            }
+        }
+    }, { // Strong breeze
+        from: 300,
+        to: 500,
+        color: 'rgba(72, 0, 78, ' + alfa + ')',
+        label: {
+            text: '严重污染',
+            style: {
+                color: '#606060'
+            }
+        }
+    }];
+
+    var rankPlotBand = [];
+
+    function showChart(container,name,content,data,min,max,plotBaud,unit)
+    {
+        var dateTypeFormat;
+        if(type=="HOUR")
+        {
+            dateTypeFormat = '%Y-%m-%d %H:%M';
+        }
+        else if(type=="DAY")
+        {
+            dateTypeFormat = '%Y-%m-%d';
+        }
+        else if(type=="MONTH")
+        {
+            dateTypeFormat = '%Y-%m';
+        }
+        var markerShowFlag;
+        if(data.length<32)
+        {
+            markerShowFlag = true;
+        }
+        else
+        {
+            markerShowFlag = false;
+        }
+        var ytitle = name;
+        if(unit.length>0)
+        {
+            ytitle =  ytitle + '(' + unit + ")";
+        }
+
+        $('#' + container).highcharts({
+
+            chart: {
+                type: 'spline',
+                zoomType: 'x',
+                spacingRight: 20
+            },
+            title: {
+                text: "检测点" + name + typetext+ '变化趋势'
+            },
+            subtitle: {
+                text: content
+            },
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats:{
+                    millisecond: '%H:%M:%S.%L',
+                    second: '%H:%M:%S',
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%m-%d',
+                    week: '%m-%d',
+                    month: '%Y-%m',
+                    year: '%Y'
+                }
+                /* labels: {
+                formatter: function() {
+                     return  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.value);
+                }
+                } */
+            },
+            yAxis: {
+                title: {
+                    text: ytitle
+                },
+                min:min,
+                max:max,
+                plotBands:plotBaud
+            },
+            tooltip: {
+                //shared: true,
+                formatter: function() {
+                    return '' + Highcharts.dateFormat(dateTypeFormat, this.x) +'<br/>' +
+                        this.series.name +': <b>'+ this.y + '</b>' + unit + " " + (this.point.d==undefined?"":this.point.d);
+                }
+            },
+            plotOptions:{
+                series:{
+                    marker: {
+                        enabled: markerShowFlag
+                    },
+                    turboThreshold: 0
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            credits : {
+                enabled:false
+            },
+
+            series: [{
+                name: name,
+                data: data,
+                connectNulls:true
+            }]
+        });
+
+    }
+
+    function showChartALL(container,content)
+    {
+        var dateTypeFormat;
+        if(type=="HOUR")
+        {
+            dateTypeFormat = '%Y-%m-%d %H:%M';
+        }
+        else if(type=="DAY")
+        {
+            dateTypeFormat = '%Y-%m-%d';
+        }
+        else if(type=="MONTH")
+        {
+            dateTypeFormat = '%Y-%m';
+        }
+        var markerShowFlag;
+        if(dataAQI.length<32)
+        {
+            markerShowFlag = true;
+        }
+        else
+        {
+            markerShowFlag = false;
+        }
+        var ytitle = '监测值';
+        $('#' + container).highcharts({
+
+            chart: {
+                type: 'spline',
+                zoomType: 'x',
+                spacingRight: 20
+            },
+            title: {
+                text: city + "综合监测值" + typetext+ '变化趋势'
+            },
+            subtitle: {
+                text: content
+            },
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats:{
+                    millisecond: '%H:%M:%S.%L',
+                    second: '%H:%M:%S',
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%m-%d',
+                    week: '%m-%d',
+                    month: '%Y-%m',
+                    year: '%Y'
+                }
+                /* labels: {
+                formatter: function() {
+                     return  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.value);
+                }
+                } */
+            },
+            yAxis: {
+                title: {
+                    text: ytitle
+                }//,
+                //min:0,
+                //max:max,
+                //plotBands:plotBaud
+            },
+            tooltip: {
+                shared: true,
+                useHTML:true,
+                formatter: function() {
+                    tip = '' + Highcharts.dateFormat(dateTypeFormat, this.x) +'<br/><hr/>'
+                        + "<table width='180px'>";
+                    var tq ="";
+                    var level ="";
+                    var color ="";
+                    for (i=0;i<this.points.length;i++)
+                    {
+                        if(this.points[i].series.name=="风级")
+                        {
+                            tip = tip + "<tr><td style='color:" +  this.points[i].series.color  +  "'>" + this.points[i].series.name +": </td><td align='right'><b>"+ this.points[i].y + "</b>级 " + this.points[i].point.d + "</td></tr>";
+                            tq = this.points[i].point.w;
+                        }
+                        else
+                        {
+
+                            unit = "";
+                            name = this.points[i].series.name;
+                            if(name=="PM2.5" || name=="PM10" || name=="SO2" || name=="NO2" ||name=="O3")
+                            {
+                                unit = "ug/m3";
+                            }
+                            else if(name=="CO")
+                            {
+                                unit = "mg/m3";
+                            }
+                            else if(name=="温度")
+                            {
+                                unit = "℃";
+                            }
+                            else if(name=="湿度")
+                            {
+                                unit = "%";
+                            }
+
+                            tip = tip +  "<tr><td style='color:" +  this.points[i].series.color  +  "'>" + this.points[i].series.name +": </td><td align='right'><b>"+ this.points[i].y + "</b>" + unit + "</td></tr>";
+                            if(name=="AQI")
+                            {
+                                obj = getColor(this.points[i].y);
+                                level = obj.quality;
+                                color = obj.color;
+
+                            }
+                        }
+                    }
+                    if(level!="")
+                    {
+                        tip = tip + "<tr><td >等级: </td><td align='right' >" + level + "</td></tr>";
+                    }
+                    if(tq!="" && type!="MONTH")
+                    {
+                        tip = tip + "<tr><td >天气: </td><td align='right'>" + tq + "</td></tr>";
+                    }
+
+                    tip = tip + "</table>";
+
+
+                    //showPolarChart("containerPolar","监测项",dataPolar);
+
+                    return tip;
+                }
+            },
+            plotOptions:{
+                series:{
+                    marker: {
+                        enabled: markerShowFlag
+                    },
+                    turboThreshold: 0
+                }
+            },
+            legend: {
+                //layout: 'hor',
+                align: 'center',
+                verticalAlign: 'bottom',
+                borderWidth: 0
+            },
+            credits : {
+                enabled:false
+            },
+            exporting:{
+                enabled:false
+            },
+            series: [
+
+                {
+                    name: 'PM2.5',
+                    data: dataPM25,
+                    connectNulls:true
+                },
+                {
+                    name: 'PM10',
+                    data: dataPM10,
+                    connectNulls:true
+                },
+                {
+                    name: '温度',
+                    data: dataTemp,
+                    connectNulls:true
+                },
+                {
+                    name: '湿度',
+                    data: dataHumi,
+                    connectNulls:true
+                },
+]
+        });
+
+    }
+
+    function showPieChart(container,name,data)
+    {
+        $('#' + container).highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: city + name + typetext+'分布情况'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    },
+                    events: {
+                        click: function(e) { //就是这里的事件响应不了。而且我不太会调试，希望得到大家指点！
+                            //alert('You just clicked the graph:' + e.point.name);
+                        }
+                    }
+                }
+            },
+            legend: {
+                enabled: true
+            },
+            credits: {
+                enabled:false
+            },
+            series: [{
+                type: 'pie',
+                name: '百分率',
+                data: data
+            }]
+        });
+    }
+
+
+    function showPolarChart(container,name,data)
+    {
+        $('#' + container).highcharts({
+            chart: {
+                polar: true,
+                type: 'line',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: city + name + typetext+'雷达分布图'
+            },
+            xAxis: {
+                categories: ['AQI', 'PM2.5', 'PM10', 'SO2','O3','NO2'],
+                tickmarkPlacement: 'on',
+                lineWidth: 0
+            },
+            yAxis: {
+                gridLineInterpolation: 'polygon',
+                lineWidth: 0,
+                min: 0
+            },
+            tooltip: {
+                shared: true,
+                useHTML:true,
+                formatter: function() {
+                    tip =  "<table width='120px'>";
+                    var tq ="";
+                    var level ="";
+                    var color ="";
+                    tip = tip + "<tr><td>AQI:</td><td align='right'>" + parseInt(data[0]) + "</td>";
+                    tip = tip + "<tr><td>PM2.5:</td><td align='right'>" + parseInt(data[1]) + "ug/m3</td>";
+                    tip = tip + "<tr><td>PM10:</td><td align='right'>" + parseInt(data[2]) + "ug/m3</td>";
+                    tip = tip + "<tr><td>SO2:</td><td align='right'>" + parseInt(data[3]) + "ug/m3</td>";
+                    tip = tip + "<tr><td>O3:</td><td align='right'>" + parseInt(data[4]) + "ug/m3</td>";
+                    tip = tip + "<tr><td>NO2:</td><td align='right'>" + parseInt(data[5]) + "ug/m3</td>";
+
+                    if(level!="")
+                    {
+                        tip = tip + "<tr><td >等级: </td><td align='right' >" + level + "</td></tr>";
+                    }
+
+                    tip = tip + "</table>";
+                    return tip;
+                }
+            },
+            legend: {
+                enabled:false
+            },
+            credits: {
+                enabled:false
+            },
+            exporting:{
+                enabled:false
+            },
+            series: [{
+                name:'监测值',
+                data: data,
+                pointPlacement: 'on'
+            }]
+        });
+
+
+
+    }
+
+
+</script>
+</body>
+</html>

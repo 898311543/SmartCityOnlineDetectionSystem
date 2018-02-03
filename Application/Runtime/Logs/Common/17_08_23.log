@@ -1,0 +1,18 @@
+[ 2017-08-23T18:24:16+08:00 ] 127.0.0.1 /MyProject/index.php?m=index?_ijt=nur5uviu1a0ceev5mf35buh792
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000179s ]
+ERR: 无法加载模块:Index?_ijt=nur5uviu1a0ceev5mf35buh792
+
+[ 2017-08-23T18:24:23+08:00 ] 127.0.0.1 /MyProject/index.php?m=index
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000183s ]
+ERR: 无法加载模块:Index
+
+[ 2017-08-23T18:24:43+08:00 ] 127.0.0.1 /MyProject/index.php?c=index&m=index
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000264s ]
+ERR: 无法加载模块:Index
+

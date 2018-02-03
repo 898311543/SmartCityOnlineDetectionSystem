@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>present_data</title>
+    <script type="text/javascript" src="/Public/javascript/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/Public/css/default.css">
+    <link rel="stylesheet" type="text/css" href="/Public/css/styles.css?v=20161231204527">
+    <style type="text/css">
+        body{
+            background-color: transparent;
+        }
+        /*.container{*/
+            /*margin-left: 0;*/
+        /*}*/
+        #buttom{
+            display: block;
+            width: 1120px;
+            margin:0 auto;
+        }
+        #present_data_display{
+            height: 900px;
+        }
+        #buttom label{
+            color: #3a3d62;
+        }
+    </style>
+    <script type="text/javascript">
+        function get_data() {
+            $.ajax({url: "http://118.89.244.53:8080/index.php/home/api/present_data",
+                type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                data: {
+                },
+                success: function(data){
+                    obj = data.data;
+                    console.log(obj[0]);
+                    $('#temp').text(obj[0].temp);
+                    $('#humid').text(obj[0].humidity);
+                    $('#pm').text(obj[0].pm25);
+                    $('#time_').text(obj[0].time);
+                    $('#jiaquan').text(obj[0].jiaquan);
+                    if(obj[0].weather == "0")
+                        $('#rain').text("未下雨");
+                    else{
+                        $('#rain').text("正在下雨");
+                    }
+                    if(data.status == 1){
+                        $('#rain').text('null');
+                    }
+                    $('#sunny').text(obj[0].illumination)
+                    $('#pm10').text(obj[0].pm10)
+                    ;
+                },
+                async: true
+            });
+
+        }
+        $(document).ready(
+            function () {
+                get_data();
+            }
+        )
+    </script>
+</head>
+<body>
+<div class="container" id="present_data_display">
+    <ul class="card-list">
+        <li class="card">
+            <div class="card-color color-temp">
+                <div class="temp"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="temp">00</span> ℃</p>
+                <p>实时温度</p>
+            </div>
+        </li>
+        <li class="card">
+            <div class="card-color color-humid">
+                <div class="humid"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="humid">00</span> %</p>
+                <p>实时湿度</p>
+            </div>
+        </li>
+        <li class="card">
+            <div class="card-color color-moon">
+                <div class="moon"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="pm">00</span> ug/m3</p>
+                <p>实时pm2.5</p>
+            </div>
+        </li>
+
+    </ul>
+    <ul class="card-list">
+        <li class="card">
+            <div class="card-color color-sunny">
+                <div class="sunny"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="sunny">0</span> Lx</p>
+                <p>光照</p>
+            </div>
+        </li>
+
+        <li class="card">
+            <div class="card-color color-pm10">
+                <div class="snow"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="pm10">0</span> ug/m3</p>
+                <p>PM10</p>
+            </div>
+        </li>
+
+        <li class="card">
+            <div class="card-color color-rain">
+                <div class="rain"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="rain">0</span> </p>
+                <p>雨水</p>
+            </div>
+        </li>
+        <li class="card">
+            <div class="card-color color-temp">
+                <div class="snow"></div>
+            </div>
+            <div class="card-info">
+                <p><span id="jiaquan">0</span> ug/m3</p>
+                <p>甲醛</p>
+            </div>
+        </li>
+
+    </ul>
+</div>
+    <div id="buttom">
+    <label>更新时间：</label>
+    <label id="time_">正在加载...</label>
+    </div>
+</body>
+</html>

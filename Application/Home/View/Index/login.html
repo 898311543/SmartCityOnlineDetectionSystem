@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>ACME Dashboard - Perfect Bootstrap Admin Template</title>
+    <meta name="description" content="ACME Dashboard Bootstrap Admin Template.">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="ACME, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <link href="/Public/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/Public/assets/css/style.min.css" rel="stylesheet">
+    <link href="/Public/assets/css/retina.min.css" rel="stylesheet">
+    <!-- end: CSS -->
+
+    <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="/Public/asserts_new/js/respond.min.js"></script>
+    <link href="/Public/asserts_new/css/ie.css" rel="stylesheet">
+    <![endif]-->
+
+    <!--[if IE 9]>
+    <link id="ie9style" href="/Public/asserts_new/css/ie9.css" rel="stylesheet">
+    <![endif]-->
+
+    <!-- start: Favicon and Touch Icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/Public/asserts_new/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/Public/asserts_new/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/Public/asserts_new/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="/Public/asserts_new/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/Public/assets/ico/favicon.png">
+    <!-- end: Favicon and Touch Icons -->
+
+    <style type="text/css">body { background: url("/Public/asserts_new/img/bg-login.jpg") !important; }
+    </style>
+
+
+
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+
+
+        <div class="row">
+            <div class="login-box">
+                <div class="icons">
+                    <a href="index.html"><i class="halflings-icon home"></i></a>
+                    <a href="login.html#"><i class="halflings-icon cog"></i></a>
+                </div>
+                <h2>登录您的账号</h2>
+                <form class="form-horizontal" action="login" method="post">
+                    <fieldset>
+                        <div class="input-wrap">
+                            <div class="input-prepend input-group" title="Username">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <input class="form-control" name="username" id="username" type="text" placeholder="用户名">
+                            </div>
+                        </div>
+                        <div class="input-wrap">
+                            <div class="input-prepend input-group" title="Password">
+                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                <input class="form-control" name="password" id="password" type="password" placeholder="密码">
+                            </div>
+                        </div>
+                        <!-- <label class="remember" for="remember"><input type="checkbox" id="remember">记住密码</label>-->
+
+                         <div class="button-login">
+                             <button type="submit" class="btn btn-primary">登录</button>
+                         </div>
+                         <div class="clearfix"></div>
+
+                         <p>
+                             <a href="index_old">游客身份登录</a>
+                         </p>
+                     </fieldset></form></div><!--/col-->
+        </div><!--/row-->
+
+    </div><!--/row-->
+
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Here settings can be configured...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div><!--/container-->
+
+
+<include file="./Application/Home/View/Index/js_new_end.html"/>
+</body></html>

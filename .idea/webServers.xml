@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="88b4262d-da3f-40fb-b3e9-10e6d950adc2" name="Apache" url="http://localhost">
+        <fileTransfer port="0" mountedRoot="/opt/lampp/htdocs" accessType="MOUNT" />
+      </webServer>
+      <webServer id="a35b8edf-c89d-4411-97eb-ed3c8745efb2" name="remote_118" url="http://118.89.244.53">
+        <fileTransfer host="118.89.244.53" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

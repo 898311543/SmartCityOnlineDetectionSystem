@@ -1,0 +1,78 @@
+[ 2017-11-18T13:21:22+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000025s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000624s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/App.class.php 第 31 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 137 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 12 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 13 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 191 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000551s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000632s ]
+
+[ 2017-11-18T13:21:27+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000248s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/App.class.php 第 31 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 137 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 12 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 13 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 191 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000289s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000355s ]
+
+[ 2017-11-18T13:21:28+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000375s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/App.class.php 第 31 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 137 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 12 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 13 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 191 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000419s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000508s ]
+
+[ 2017-11-18T13:21:28+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000260s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/App.class.php 第 31 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 137 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 12 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 13 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 191 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000284s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000361s ]
+
+[ 2017-11-18T13:21:29+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000421s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/App.class.php 第 31 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 137 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 12 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 13 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 191 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000525s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000677s ]
+
+[ 2017-11-18T13:21:30+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000361s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/App.class.php 第 31 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 137 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 12 行.
+NOTIC: [8] Use of undefined constant __ROOT__ - assumed '__ROOT__' /home/shubin/PhpstormProjects/MyProject/Application/Home/Conf/config.php 第 13 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/shubin/PhpstormProjects/MyProject/ThinkPHP/Library/Think/Dispatcher.class.php 第 191 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000399s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000486s ]
+

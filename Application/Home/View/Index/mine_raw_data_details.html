@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>ACME Dashboard - Perfect Bootstrap Admin Template</title>
+    <meta name="description" content="ACME Dashboard Bootstrap Admin Template.">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="ACME, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <!-- end: Meta -->
+    <include file="./Application/Home/View/Index/header_include.html"/>
+    <style type="text/css">
+        .Pagination a:hover,.current{background-color: #f54281;border: 1px solid #f54281;color: #ffffff; }
+        .Pagination{float: right;height: auto;_height: 45px; line-height: 20px;margin-right: 15px;_margin-right: 5px; color:#565656;margin-top: 10px;_margin-top: 20px; clear:both;}
+        .Pagination a,.Pagination span{ font-size: 14px;text-decoration: none;display: block;float: left;color: #565656;border: 1px solid #ccc;height: 34px;line-height: 34px;margin: 0 2px;width: 34px;text-align: center;}
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    function deletezdata(dom,id){
+        $(dom).text('正在删除');
+        $.ajax({
+            url: '/index.php/Home/Index/delete_rawdata',
+            type: 'GET',     // 请求类型，常用的有 GET 和 POST
+            data: {
+                'id': id,
+            },
+            success: function (data) { // 接口调用成功回调函数
+                if (data.status == 'success') {
+                    $("#"+id).remove();
+                    //       console.log(data);
+                }
+                else {
+                    console.log("删除失败！")
+                }
+            },
+            async: true
+        });
+    }
+</script>
+<include file="./Application/Home/View/Index/header_navbar.html"/>
+
+
+<include file="./Application/Home/View/Index/side_left.html"/>
+
+<div id="content" class="col-sm-11">
+    <div class="box">
+        <div class="box-header">
+            <p>设备号:{$device_inform.hard_id}&nbsp;&nbsp;设备名称:{$device_inform.detail}</p>
+        </div>
+    <table class="table table-striped table-bordered bootstrap-datatable datatable dataTable" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+        <thead>
+        <tr role="row">
+            <th style="" data-field="Id"><div class="th-inner ">编号</div><div class="fht-cell"></div></th>
+            <th style="" data-field="StartTime"><div class="th-inner ">时间</div><div class="fht-cell"></div></th>
+            <th style="" data-field="EndTime"><div class="th-inner ">温度</div><div class="fht-cell"></div></th>
+            <th style="" data-field="ExceptionInfo"><div class="th-inner ">湿度</div><div class="fht-cell"></div></th>
+            <th style="" data-field="GradeRule"><div class="th-inner ">PM2.5</div><div class="fht-cell"></div></th>
+            <th style="" data-field="operation"><div class="th-inner ">PM10</div><div class="fht-cell"></div></th>
+            <th style="" data-field="operation"><div class="th-inner ">光照</div><div class="fht-cell"></div></th>
+            <th style="" data-field="operation"><div class="th-inner ">纬度</div><div class="fht-cell"></div></th>
+            <th style="" data-field="operation"><div class="th-inner ">经度</div><div class="fht-cell"></div></th>
+            <th style="" data-field="operation"><div class="th-inner ">操作</div><div class="fht-cell"></div></th>
+        </tr>
+        </thead>
+        <tbody>
+        <volist name="list" id="vo" key="k">
+            <tr data-index="0" id="{$vo.id}">
+                <td style="">{$vo.id}</td> <td style="">{$vo.time}</td>
+                <td style="">{$vo.temp}</td> <td style="">{$vo.humidity}</td>
+                <td style="">{$vo.pm25}</td>
+                <td style="">{$vo.field1}</td>
+                <td style="">{$vo.illumination}</td>
+                <td style="">{$vo.location_x}</td>
+                <td style="">{$vo.location_y}</td>
+                <td style=""><a class="btn btn-danger btn-sm" href="javascript:void(0)" onclick="deletezdata(this,{$vo.id})">删除</a></td> </tr>
+        </volist>
+        </tbody>
+    </table>
+    <div class="Pagination">
+    {$page}
+    </div>
+    </div>
+</div>
+
+
+<include file="./Application/Home/View/Index/js_new_end.html"/>
+</body>
+</html>

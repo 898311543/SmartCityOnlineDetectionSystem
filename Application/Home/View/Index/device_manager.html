@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>ACME Dashboard - Perfect Bootstrap Admin Template</title>
+    <meta name="description" content="ACME Dashboard Bootstrap Admin Template.">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="ACME, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <!-- end: Meta -->
+
+    <include file="./Application/Home/View/Index/header_include.html"/>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+    <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+</head>
+<body>
+
+<include file="./Application/Home/View/Index/header_navbar.html"/>
+
+<include file="./Application/Home/View/Index/side_left.html"/>
+<div id="content" class="col-sm-11">
+    <div class="row">
+        <section class="content-header">
+            <h1>您正在管理【{$device_information.detail}】<small>设备编号：{$device_information.hard_id}</small>
+            </h1>
+        </section>
+    </div>
+    <div class="box">
+        <div class="box-header">
+            <p><i class="fa fa-list"></i><span class="break"></span>基本信息</p>
+        </div>
+        <div class="box-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>设备编号：</label>
+                        <input type="text" class="form-control" value="{$device_information.hard_id}" disabled="disabled">
+                    </div>
+                    <div class="form-group">
+                        <label>标记：</label>
+                        <input type="text" id="id_name" class="form-control" name="model.Mark" value="{$device_information.id_name}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>设备名称：</label>
+                        <input type="text" id="detail" class="form-control" name="model.DeviceName" value="{$device_information.detail}">
+                    </div>
+                    <div class="form-group">
+                        <label>设备型号：</label>
+                        <input type="text" id="type" class="form-control" name="model.DeviceName" value="{$device_information.type}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <br/>
+                        <button type="submit" class="btn btn-primary btn-sm pull-right" onclick="update_val(this)">提交修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-header">
+            <p><i class="fa fa-list"></i><span class="break"></span>设备管理</p>
+        </div>
+        <div class="box-content">
+            <div class="row">
+                <div class="col-md-5">
+                    <button <eq name="device_information.remote_manager" value="0">disabled title="nb设备暂不支持远程管理"</eq> style="pointer-events: auto" class="btn btn-primary" onclick="open_sys()">开启设备</button>
+                    <button <eq name="device_information.remote_manager" value="0">disabled title="nb设备暂不支持远程管理"</eq> style="pointer-events: auto" class="btn btn-primary" onclick="close_sys()">关闭设备</button>
+                    <button class="btn btn-danger" onclick="delcfm({$device_information.hard_id})">删除设备（请谨慎删除）</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="id_store"/>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">数据更新成功</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <!-- 信息删除确认 -->
+    <div class="modal fade" id="delcfmModel">
+        <div class="modal-dialog">
+            <div class="modal-content message_align">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    <p>您确认要删除吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="url"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <a  onclick="urlSubmit()" class="btn btn-success" data-dismiss="modal">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+    function update_val(dom){
+        $(dom).text('正在更改');
+        $.ajax({
+            url: '../api/modify_machine',
+            type: 'POST',     // 请求类型，常用的有 GET 和 POST
+            data: {
+                device_id:{$device_information.hard_id},
+                id_name:$("#id_name").val(),
+                detail:$("#detail").val()
+            },
+            success: function (data) { // 接口调用成功回调函数
+                console.log(data);
+                if (data == '1') {
+                    $("#myModal").modal("show");
+                    $(dom).text('确定');
+                }
+                else {
+                    console.log("更新失败！")
+                }
+            },
+            async: true
+        });
+    }
+    function delcfm(id) {
+        $('#id_store').val(id);//给会话中的隐藏属性URL赋值
+        $('#delcfmModel').modal();
+    }
+    function urlSubmit() {
+        var id = $('#id_store').val();
+        window.location.href="delete_device?device_id="+id;
+    }
+    function close_sys() {
+        if(window.confirm('是否真的要关闭系统?')){
+            $.get(
+                "http://118.89.244.53:8080/index.php/home/api/close_sys"
+            )
+            alert("系统将会关闭！");
+        }
+    }
+    function open_sys() {
+        if(window.confirm('是否真的要开启系统?')){
+            $.get(
+                "http://118.89.244.53:8080/index.php/home/api/open_sys"
+            )
+            alert("系统将会开启！");
+        }
+    }
+</script>
+
+
+
+<include file="./Application/Home/View/Index/js_new_end.html"/>
+</body>
+</html>

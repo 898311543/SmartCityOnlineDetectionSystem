@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备管理</title>
+    <meta name="renderer" content="webkit">
+
+    <!-- No Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="icon" type="image/png" href="/Public/assets/i/favicon.png">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="/Public/assets/i/app-icon72x72@2x.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="apple-touch-icon-precomposed" href="/Public/assets/i/app-icon72x72@2x.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="/Public/assets/i/app-icon72x72@2x.png">
+    <meta name="msapplication-TileColor" content="#0e90d2">
+
+    <link rel="stylesheet" href="/Public/assets/css/amazeui.min.css">
+    <link rel="stylesheet" href="/Public/assets/css/app.css">
+    <script type="text/javascript" src="/Public/javascript/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+            crossorigin="anonymous"></script>
+    <style type="text/css"></style>
+</head>
+<body>
+<div class="admin-content">
+    <div class="admin-content-body">
+
+        <hr>
+        <form class="am-form-inline" role="form" action="/index.php/home/api/add_machine" method="post" target="_" id="add_form">
+            <label>&nbsp;&nbsp;&nbsp;新增检测点：</label>
+            <div class="am-form-group">
+                <input type="text" class="am-form-field" placeholder="ID" name="id">
+            </div>
+
+            <div class="am-form-group">
+                <input type="text" class="am-form-field" placeholder="简介" name="detail">
+            </div>
+            <div class="am-form-group">
+                <input type="text" class="am-form-field" placeholder="编码号" name="id_name">
+            </div>
+
+
+            <button type="submit" class="am-btn am-btn-default">新增</button>
+        </form>
+        <div class="am-g">
+            <div class="am-u-sm-12">
+                    <table class="am-table am-table-striped am-table-hover table-main">
+                        <thead>
+                        <tr>
+                            <th class="table-check"><input type="checkbox"></th><th class="table-id">ID</th><th class="table-title">简介</th><th class="table-type">编码号</th><th class="table-author am-hide-sm-only">作者</th><th class="table-date am-hide-sm-only">修改日期</th><th class="table-set">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <volist name="list" id="vo">
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td class="id">{$vo.id}</td>
+                            <td><a href="#"></a> {$vo.detail}</td>
+                            <td>{$vo.id_name}</td>
+                            <td class="am-hide-sm-only"> {$vo.operator}</td>
+                            <td class="am-hide-sm-only"> {$vo.time}</td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only delete_button"><span class="am-icon-trash-o"></span> 删除</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </volist>
+
+
+
+                        </tbody>
+                    </table>
+
+                    <hr>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(".delete_button").click(function () {
+            var id=$(this).parents("tr").find(".id").text();
+            $.ajax({
+                url: '/index.php/home/api/del_machine',
+                type: 'POST',     // 请求类型，常用的有 GET 和 POST
+                data: {
+                    'id':id
+                },
+                success: function (data) { // 接口调用成功回调函数
+                    alert('删除成功');
+                    console.log(data);
+                    location.reload();
+                },
+                async: true
+        });
+
+        });
+        var frm = $('#add_form');
+        frm.submit(function (ev) {
+            $.ajax({
+                type: frm.attr('method'),
+                url: frm.attr('action'),
+                data: frm.serialize(),
+                success: function (data) {
+                    alert('添加成功');
+                }
+            });
+
+            ev.preventDefault();
+            location.reload();
+        });
+    </script>
+
+</div>
+</body>
+</html>

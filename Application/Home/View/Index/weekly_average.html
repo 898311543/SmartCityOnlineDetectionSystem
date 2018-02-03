@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>weekly_average</title>
+
+    <script type="text/javascript" src="/Public/javascript/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/Public/javascript/jquery-ui-1.10.3.custom.min.js?v=4"></script>
+    <link type="text/css" rel="stylesheet" href="/Public/css/jquery-ui-1.10.3.custom.css"/>
+    <script src="/Public/code/highcharts.js"></script>
+    <script src="/Public/code/modules/exporting.js"></script>
+    <script src="/Public/javascript/no-data-to-display.js"></script>
+    <script>
+        $(function() {
+            $( "#tabs" ).tabs();
+
+        });
+        $(document).ready(
+            function () {
+                $.ajax({
+                    url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_temp',
+                    type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                    data: {
+                    },
+                    success: function(data) { // 接口调用成功回调函数
+                        console.log(data.data);
+                        data = data.data;
+                        for(var i= 6;i>=0;i--) {
+                            var value = Math.floor(data[i].value);
+                            if (value == -1)
+                                value = null;
+                            console.log(value);
+                            chart_temp.series[0].addPoint(value);
+                            container_all_chart.series[0].addPoint([value]);
+                        }
+
+                    },
+                    async: true
+                });
+                $.ajax({
+                    url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_humid',
+                    type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                    data: {
+                    },
+                    success: function(data) { // 接口调用成功回调函数
+                        console.log(data);
+                        data = data.data;
+                        for(var i= 6;i>=0;i--) {
+                            value = Math.floor(data[i].value);
+                            if (value == -1)
+                                value = null;
+                            chart_humid.series[0].addPoint(value);
+                            container_all_chart.series[1].addPoint([value]);
+                        }
+                    },
+                    async: true
+                });
+                $.ajax({
+                    url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_pm25',
+                    type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                    data: {
+                    },
+                    success: function(data) { // 接口调用成功回调函数
+                        console.log(data);
+                        data = data.data;
+                        console.log(data[0].value);
+                        for(var i= 6;i>=0;i--) {
+                            value = Math.floor(data[i].value);
+                            if (value == -1)
+                                value = null;
+                            chart_pm25.series[0].addPoint(value);
+                            container_all_chart.series[2].addPoint([value]);
+                        }
+                    },
+                    async: true
+                });
+                $.ajax({
+                    url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_pm10',
+                    type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                    data: {
+                    },
+                    success: function(data) { // 接口调用成功回调函数
+                        data = data.data;
+                        console.log(data[0].value);
+                        for(var i= 6;i>=0;i--) {
+                            value = Math.floor(data[i].value);
+                            if (value == -1)
+                                value = null;
+                            chart_pm10.series[0].addPoint(value);
+                            container_all_chart.series[3].addPoint([value]);
+                        }
+                    },
+                    async: true
+                });
+
+
+            }
+        );
+    </script>
+    <style type="text/css">
+        #tabs{
+            margin-left: 0;
+            background-color: transparent;
+        }
+
+    </style>
+</head>
+<body>
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-5">综合变化</a> </li>
+        <li><a href="#tabs-1">温度变化</a></li>
+        <li><a href="#tabs-2">湿度变化</a></li>
+        <li><a href="#tabs-3">PM25变化</a></li>
+        <li><a href="#tabs-4">PM10变化</a> </li>
+    </ul>
+    <div id="tabs-1">
+        <div id="temp_chart" style="min-width: 310px; height: 580px; margin: 0 auto;"></div>
+    </div>
+    <div id="tabs-2">
+        <div id="humid_chart" style="min-width: 310px; height: 580px; margin: 0 auto;"></div>
+    </div>
+    <div id="tabs-3">
+        <div id="pm25_chart" style="min-width: 310px; height: 580px;margin:0 auto;"></div>
+    </div>
+    <div id="tabs-4">
+        <div id="pm10_chart" style="min-width: 310px; height: 580px;margin:0 auto;"></div>
+    </div>
+    <div id="tabs-5">
+        <div id="container_all_chart" style="min-width: 310px; height: 580px;margin:0 auto;"></div>
+    </div>
+</div>
+
+    <script type="text/javascript">
+        var data_array = ['Mon','Tues','Wed','Thurs','Fri','Sat','Sun'];
+        var temp_array = [];
+        var i;
+        var myDate = new Date();
+        day = myDate.getDay();
+        if(day == 0)
+            day = 7;
+        for(i = 0; i <7; i++)
+            temp_array[i] = data_array[(day-1+i)%7 ];
+        Highcharts.setOptions({
+            lang: {
+                noData: '暂无数据'
+            }
+        });
+        chart_temp = Highcharts.chart('temp_chart', {
+            chart: {
+                type: 'spline'
+            },
+            colors:['#ED561B'],
+            title: {
+                text: '周平均温度检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：温度'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + '°';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: '温度',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+            }]
+        });
+
+        chart_humid = Highcharts.chart('humid_chart', {
+            chart: {
+                type: 'spline',
+                width:$('#temp_chart').width(),
+            },
+            title: {
+                text: '周平均湿度检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：湿度'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'humidity'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + '%';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: '湿度',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+
+            }]
+        });
+
+        chart_pm25 = Highcharts.chart('pm25_chart', {
+            chart: {
+                type: 'spline'
+            },
+            colors:["#c0c0c0"],
+            title: {
+                text: '周平均PM2.5检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：PM2.5'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'humidity'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + 'ug/m³';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: 'PM2.5',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+
+            }]
+        });
+        chart_pm10 = Highcharts.chart('pm10_chart', {
+            chart: {
+                type: 'spline'
+            },
+            colors:["#c0c0c0"],
+            title: {
+                text: '周平均PM10检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：PM10'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'PM10'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + 'ug/m³';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: 'PM10',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+
+            }]
+        });
+        container_all_chart = Highcharts.chart('container_all_chart', {
+            chart: {
+                type: 'spline',
+                zoomType: 'x',
+                spacingRight: 20
+            },
+            title: {
+                text: "综合监测值" + "周" + '变化趋势'
+            },
+            subtitle: {
+                text: '城市环境检测：综合监测值'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: "监测值"
+                }
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                formatter: function () {
+                    tip = '' + this.x + '<br/><hr/>'
+                        + "<table width='180px'>";
+                    for (i = 0; i < this.points.length; i++) {
+                        unit = "";
+                        name = this.points[i].series.name;
+                        if (name == "PM2.5" || name == "PM10" || name == "SO2" || name == "NO2" || name == "O3") {
+                            unit = "ug/m3";
+                        }
+                        else if (name == "温度") {
+                            unit = "℃";
+                        }
+                        else if (name == "湿度") {
+                            unit = "%";
+                        }
+                        tip = tip + "<tr><td style='color:" + this.points[i].series.color + "'>" + this.points[i].series.name + ": </td><td align='right'><b>" + this.points[i].y + "</b>" + unit + "</td></tr>";
+
+
+                    }
+                    tip = tip + "</table>";
+                    return tip;
+
+                }
+
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: true
+                    },
+                    turboThreshold: 0
+                }
+            },
+            legend: {
+                //layout: 'hor',
+                align: 'center',
+                verticalAlign: 'bottom',
+                borderWidth: 0
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [
+                {
+                    name: '温度',
+                    connectNulls:true
+                },
+                {
+                    name: '湿度',
+                    connectNulls:true
+                },
+                {
+                    name: 'PM2.5',
+                    connectNulls:true
+                },
+                {
+                    name: 'PM10',
+                    connectNulls:true
+                },
+            ]
+        });
+    </script>
+</body>
+</html>

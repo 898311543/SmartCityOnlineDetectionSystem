@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>ACME Dashboard - Perfect Bootstrap Admin Template</title>
+
+    <include file="./Application/Home/View/Index/header_include.html"/>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+    <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+</head>
+<body>
+
+<include file="./Application/Home/View/Index/header_navbar.html"/>
+
+<include file="./Application/Home/View/Index/side_left.html"/>
+
+<script>
+    //PM25
+    $(function() {
+        $( "#slider-range1" ).slider({
+            range: true,
+            min: 0,
+            max: 1000,
+            values: [ {$old_data.pm25.min},{$old_data.pm25.max} ],
+            slide: function( event, ui ) {
+                $( "#amount{$old_data.pm25.id}" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            }
+        });
+        $( "#amount{$old_data.pm25.id}" ).val(  $( "#slider-range1" ).slider( "values", 0 ) +
+            " - " + $( "#slider-range1" ).slider( "values", 1 ) );
+    });
+    //PM10
+    $(function() {
+        $( "#slider-range2" ).slider({
+            range: true,
+            min: 0,
+            max: 1000,
+            values: [ {$old_data.pm10.min}, {$old_data.pm10.max}],
+            slide: function( event, ui ) {
+                $( "#amount{$old_data.pm10.id}" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            }
+        });
+        $( "#amount{$old_data.pm10.id}" ).val(  $( "#slider-range2" ).slider( "values", 0 ) +
+            " - " + $( "#slider-range2" ).slider( "values", 1 ) );
+    });
+    //温度
+    $(function() {
+        $( "#slider-range3" ).slider({
+            range: true,
+            min: -50,
+            max: 100,
+            values: [ {$old_data.tempture.min}, {$old_data.tempture.max} ],
+            slide: function( event, ui ) {
+                $( "#amount{$old_data.tempture.id}" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            }
+        });
+        $( "#amount{$old_data.tempture.id}" ).val(  $( "#slider-range3" ).slider( "values", 0 ) +
+            " - " + $( "#slider-range3" ).slider( "values", 1 ) );
+    });
+    //湿度
+    $(function() {
+        $( "#slider-range4" ).slider({
+            range: true,
+            min: 0,
+            max: 100,
+            values: [ {$old_data.humidity.min}, {$old_data.humidity.max} ],
+            slide: function( event, ui ) {
+                $( "#amount{$old_data.humidity.id}" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+            }
+        });
+        $( "#amount{$old_data.humidity.id}" ).val(  $( "#slider-range4" ).slider( "values", 0 ) +
+            " - " + $( "#slider-range4" ).slider( "values", 1 ) );
+    });
+    function update_val(dom,id){
+        $(dom).text('正在更改');
+        $.ajax({
+            url: 'change_warning_range',
+            type: 'POST',     // 请求类型，常用的有 GET 和 POST
+            data: {
+                'id': id,
+                "min_val":$("#amount"+id).val().split("-")[0].trim(),
+                "max_val":$("#amount"+id).val().split("-")[1].trim()
+            },
+            success: function (data) { // 接口调用成功回调函数
+                console.log(data);
+                if (data.status == 'success') {
+                    $("#myModal").modal("show");
+                    $(dom).text('确定');
+                }
+                else {
+                    console.log("删除失败！")
+                }
+            },
+            async: true
+        });
+    }
+</script>
+
+
+<div id="content" class="col-sm-11">
+    <div class="row">
+
+        <div class="content-header">
+            <h1>监测项等级和超标设置
+                <button type="button" class="btn btn-box-tool" title="点击刷新" onclick="RefreshPageContent()"><i class="fa fa-refresh"></i></button>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#" onclick="openPage('/home/center')"><i class="fa fa-home"></i>首页</a></li>
+                <li class="active">等级和超标</li>
+            </ol>
+        </div>
+        <section class="content-header">
+            <h3  align="center">PM2.5</h3>
+        </section>
+
+
+
+
+
+        <div class="row">
+            <div class="col-md-4">
+            <label for="amount{$old_data.pm25.id}">数值范围：</label>
+            <input type="text" id="amount{$old_data.pm25.id}" style="border:0; color:#90EE90; font-weight:bold;">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                 <div id="slider-range1"></div>
+            </div>
+        </div>
+        <p> <p>
+        <div align="center">
+            <button type="button" class="btn btn-info btn-sm" onclick="update_val(this,{$old_data.pm25.id});">确定</button>
+        </div>
+
+
+
+        <section class="content-header">
+            <h3  align="center">PM10</h3>
+        </section>
+
+        <div class="row">
+            <div class="col-md-4">
+            <label for="amount{$old_data.pm10.id}">数值范围：</label>
+            <input type="text" id="amount{$old_data.pm10.id}" style="border:0; color:#90EE90; font-weight:bold;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div id="slider-range2"></div>
+            </div>
+        </div>
+        <p> <p>
+        <div align="center">
+            <button type="button" class="btn btn-info btn-sm" onclick="update_val(this,{$old_data.pm10.id})">确定</button>
+        </div>
+
+
+        <h3  align="center">温度</h3>
+
+
+        <div class="row">
+            <div class="col-md-4">
+            <label for="amount{$old_data.tempture.id}">数值范围：</label>
+            <input type="text" id="amount{$old_data.tempture.id}" style="border:0; color:#90EE90; font-weight:bold;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div id="slider-range3"></div>
+            </div>
+        </div>
+        <p> <p>
+        <div align="center">
+            <button type="button" class="btn btn-info btn-sm" onclick="update_val(this,{$old_data.tempture.id});">确定</button>
+        </div>
+
+
+
+            <h3  align="center">湿度</h3>
+
+        <col align="left" />
+
+        <div class="row">
+            <div class="col-md-4">
+            <label for="amount{$old_data.humidity.id}">数值范围：</label>
+            <input type="text" id="amount{$old_data.humidity.id}" style="border:0; color:#90EE90; font-weight:bold;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div id="slider-range4"></div>
+            </div>
+        </div>
+        <p> <p>
+        <div align="center">
+            <button type="button" class="btn btn-info btn-sm" onclick="update_val(this,{$old_data.humidity.id})">确定</button>
+        </div>
+    </div>
+    <div class="row">
+
+    </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">数据更新成功</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+<include file="./Application/Home/View/Index/js_new_end.html"/>
+</body>
+</html>

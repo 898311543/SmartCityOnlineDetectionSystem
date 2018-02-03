@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>ACME Dashboard - Perfect Bootstrap Admin Template</title>
+    <meta name="description" content="ACME Dashboard Bootstrap Admin Template.">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="ACME, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <!-- end: Meta -->
+    <include file="./Application/Home/View/Index/header_include.html"/>
+</head>
+<body>
+<include file="./Application/Home/View/Index/header_navbar.html"/>
+<include file="./Application/Home/View/Index/side_left.html"/>
+
+<div id="content" class="col-sm-11">
+    <div class="row">
+
+        <section class="content-header">
+            <h1>环境排行榜
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#" onclick="openPage('/home/center')"><i class="fa fa-home"></i>首页</a></li>
+                <li class="active">环境排行榜</li>
+            </ol>
+        </section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <label>
+                        排行模式：
+                        <form>
+                        <label class="">
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked="checked"/>列表</label></label>
+                        </form>
+                    </label>
+
+
+                    <label>
+                        排行依据项：
+                        <select id="rank-itemkey" style="min-width: 150px" tabindex="-1" class="select2-hidden-accessible" aria-hidden="true">
+                            <option value="humidity">湿度</option>
+                            <option value="temp">温度</option>
+                            <option value="field1">PM10</option>
+                            <option value="pm2.5">PM2.5</option>
+                        </select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 150px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-rank-itemkey-container"><span class="select2-selection__rendered" id="select2-rank-itemkey-container" title=""></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                    </label>
+                    <input type="hidden" id="rank-devices" value="">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>数据来源：</label>
+                            <label>
+                                <label class="">
+                                    <input type="radio" name="period" id="optionsRadios4" value="all" checked="checked"/>所有</label>
+                            </label>
+                            <label>
+                                <label class="">
+                                    <input type="radio" name="period" id="optionsRadios5" value="d30"/>近30天</label>
+
+                            </label>
+                            <label>
+                                <label class="">
+                                    <input type="radio" name="period" id="optionsRadios6" value="d7"/>近7天</label>
+                            </label>
+                            <label>
+                                <label class="">
+                                    <input type="radio" name="period" id="optionsRadios7" value="dm"/>自定义时间</label>
+                                <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+                                <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+                                <link rel="stylesheet" href="jqueryui/style.css">
+                                <script>
+                                    $(function() {
+                                        $( "#datepicker1" ).datepicker({
+                                            });
+
+                                        $( "#datepicker2" ).datepicker({
+                                        });
+                                    });
+                                </script>
+                                <label>
+                                    <label class="">
+                                <p> 开始：<input type="text" id="datepicker1"></p> </label>
+                                </label>
+                                <label>
+                                    <label class="">
+                                        <p> 结束：<input type="text" id="datepicker2"></p> </label>
+                                </label>
+
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info btn-sm" onclick="RankStart(self)">开始计算</button>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <table id="Rank-DataTable" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>设备编号</th>
+                                    <th>设备名称</th>
+                                    <th>温度均值</th>
+                                    <th>湿度均值</th>
+                                    <th>PM2.5均值</th>
+                                    <th>PM10均值</th>
+                                </tr>
+                                </thead>
+                                <tbody id="rank-tbody">
+                                    <volist name="list" id="vo" key="k">
+                                        <tr class="odd">
+                                            <td class="sorting_1">{$k}</td>
+                                            <td>{$vo.device_id}</td>
+                                            <td>{$vo.detail} </td>
+                                            <td>{$vo.temp}</td>
+                                            <td>{$vo.humidity}</td>
+                                            <td>{$vo.pm25}</td>
+                                            <td>{$vo.pm10}</td>
+                                        </tr>
+                                    </volist>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="Rank-BarChart" style="height: 330px; display: none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    </div>
+</div>
+
+
+<include file="./Application/Home/View/Index/js_new_end.html"/>
+<!-- end: JavaScript-->
+<script>
+    function RankStart() {
+        var rank_type = $("#rank-itemkey").val();
+        var period = $(':radio[name="period"]:checked').val();
+        curDate = new Date();
+        switch(period){
+            case "all":
+                start_time = "1990-01-01";
+                end_time = $.datepicker.formatDate('yy-mm-dd', new Date(curDate.getTime()+ 24*60*60*1000));
+                break;
+            case "d30":
+                start_time = $.datepicker.formatDate('yy-mm-dd',new Date(curDate.getTime()-30*24*60*60*1000));
+                end_time = $.datepicker.formatDate('yy-mm-dd',curDate);
+                break;
+            case "d7":
+                start_time = $.datepicker.formatDate('yy-mm-dd',new Date(curDate.getTime()-7*24*60*60*1000));
+                end_time = $.datepicker.formatDate('yy-mm-dd',curDate);
+                break;
+            case "dm":
+                start_time = $.datepicker.formatDate("yy-mm-dd",$.datepicker.parseDate( "mm/dd/yy", $("#datepicker1").val()));
+                end_time = $.datepicker.formatDate("yy-mm-dd",$.datepicker.parseDate( "mm/dd/yy", $("#datepicker2").val()));
+                break;
+        }
+        $.ajax({
+            url: 'rank_ajax',
+            type: 'POST',     // 请求类型，常用的有 GET 和 POST
+            data: {
+                'start_time': start_time,
+                'end_time': end_time,
+                'rank_type': rank_type
+            },
+            success: function (data) { // 接口调用成功回调函数
+                console.log(data);
+                $("#rank-tbody>tr").remove();
+                var i = 0;
+                data.forEach(function(each) {
+                    i++;
+                    $("#rank-tbody").append('                        <tr class="odd">\n' +
+                        '                                            <td class="sorting_1">' + i + '</td>\n' +
+                        '                                            <td>' + each.device_id + '</td>\n' +
+                        '                                            <td>' + each.detail + '</td>\n' +
+                        '                                            <td>' + each.temp + '</td>\n' +
+                        '                                            <td>' + each.humidity + '</td>\n' +
+                        '                                            <td>' + each.pm25 + '</td>\n' +
+                        '                                            <td>' + each.pm10 + '</td>\n' +
+                        '                                        </tr>');
+                });
+                i = 0;
+            },
+            async: true
+        });
+
+    }
+</script>
+
+</body>
+</html>

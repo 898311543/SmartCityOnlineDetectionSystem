@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>ACME Dashboard - Perfect Bootstrap Admin Template</title>
+    <meta name="description" content="ACME Dashboard Bootstrap Admin Template.">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="ACME, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <!-- end: Meta -->
+
+    <include file="./Application/Home/View/Index/header_include.html"/>
+
+</head>
+<body>
+
+<include file="./Application/Home/View/Index/header_navbar.html"/>
+
+<include file="./Application/Home/View/Index/side_left.html"/>
+
+<div id="content" class="col-sm-11">
+        <iframe id="iframe" allowtransparency="true" frameborder="0" scrolling="no" src="http://118.89.244.53:8080/index.php/home/index/history_data" style="min-height: 535px;width: 100%"></iframe>
+</div>
+
+
+
+<include file="./Application/Home/View/Index/js_new_end.html"/>
+
+<script type="text/javascript">
+    $("#data_manage").addClass("active");
+    $("#chart_analysis").addClass("active");
+</script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<?php if (!defined('THINK_PATH')) exit();?><!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>环境检测系统数据展示</title>
+	<link rel="stylesheet" type="text/css" href="/Public/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" href="/Public/css/default.css">
+	<link rel="stylesheet" type="text/css" href="/Public/css/styles.css">
+	<script src="/Public/code/highcharts.js"></script>
+	<script src="/Public/code/modules/exporting.js"></script>
+	<script src="/Public/javascript/no-data-to-display.js"></script>
+	<script type="text/javascript" src="/Public/javascript/jquery.js"></script>
+	<style>
+		body{
+			background-image: url("/Public/static/login_bg.jpg");
+			background-repeat: no-repeat;
+			background-attachment:fixed;
+			background-size:100% 100%;
+			-moz-background-size:35% 100%; /* 老版本的 Firefox */
+		}
+		#time_label {
+			float: right;
+			vertical-align: baseline;
+			font-family: "Lato", sans-serif;
+			font-size: 1.1em;
+			color: white;
+		}
+		#time {
+			float: right;
+			margin-right: 20px;
+			font-family: "Lato", sans-serif;
+			font-size: 1.1em;
+			color: white;
+		}
+		#scendary_content label{
+			vertical-align: baseline;
+			font-family: "Lato", sans-serif;
+			font-size: 1.1em;
+			color: white;
+		}
+		.card-list{
+			margin-top: 50px;
+		}
+		#note{
+			font-size: 1.6em;
+		}
+		#header{
+			overflow: hidden;
+		}
+		.htmleaf-header h1{
+			clear: both;
+		}
+		#main_content {
+			width: 67.7%;
+			float: left;
+			padding-right:1.04%;
+			padding-left: 28.12%;
+			background-color: transparent;
+			margin:0 auto;
+			display: inline;
+		}
+		#scendary_content{
+			margin-top: 50px;
+			float: right;
+			width: 26.04%;
+			padding-right: 10.02%;
+			text-align: left;
+			clear: right;
+			display: inline;
+		}
+		#scendary_content label{
+			padding-top: 5px;
+		}
+		.right{
+
+		}
+		.htmleaf-header{
+			min-width: 800px;
+		}
+		button{
+			background-color: green;
+			color: white;
+
+		}
+	</style>
+	<script type="text/javascript">
+        function get_data() {
+            htmlobj = $.ajax({url: "http://118.89.244.53:8080/index.php/home/api/present_data", async: false});
+            var content = htmlobj.responseText;
+            var obj = eval("(" + content + ")");
+            $('#temp').text(obj.data[0].temp);
+            $('#humid').text(obj.data[0].humidity);
+            $('#pm').text(obj.data[0].pm25);
+            $('#time').text(obj.data[0].time);
+        }
+		$(document).ready(function () {
+			get_data();
+            $.ajax({
+                url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_temp',
+                type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                data: {
+                },
+                success: function(data) { // 接口调用成功回调函数
+                    data = JSON.parse(data).data;
+                    for(var i= 6;i>=0;i--) {
+                        var value = Math.floor(data[i].value);
+                        if (value == -1)
+                            value = null;
+                        console.log(value);
+                        chart_temp.series[0].addPoint(value);
+                    }
+
+                },
+                async: true
+            });
+            $.ajax({
+                url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_humid',
+                type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                data: {
+                },
+                success: function(data) { // 接口调用成功回调函数
+                    data = JSON.parse(data).data;
+                    for(var i= 6;i>=0;i--) {
+                        value = Math.floor(data[i].value);
+                        if (value == -1)
+                            value = null;
+                        chart_humid.series[0].addPoint(value);
+                    }
+                },
+                async: true
+            });
+            $.ajax({
+                url: 'http://118.89.244.53:8080/index.php/home/api/weely_average_pm25',
+                type: 'GET',     // 请求类型，常用的有 GET 和 POST
+                data: {
+                },
+                success: function(data) { // 接口调用成功回调函数
+                    data = JSON.parse(data).data;
+                    console.log(data[0].value);
+                    for(var i= 6;i>=0;i--) {
+                        value = Math.floor(data[i].value);
+                        if (value == -1)
+                            value = null;
+                        chart_pm25.series[0].addPoint(value);
+                    }
+                },
+                async: true
+            });
+        });
+        var value = window.setInterval("get_data()",5000);
+        function  change_refresh() {
+			if($("#fresh").text() == "开启"){
+			    $("#fresh").text("关闭");
+			    window.clearInterval(value);
+			}
+			else if($("#fresh").text() == "关闭"){
+                $("#fresh").text("开启");
+                value = window.setInterval("get_data()",5000);
+			}
+        }
+        function close_sys() {
+			if(window.confirm('关闭系统后将无法远程开机，是否真的要关闭系统?')){
+			    $.get(
+			        "http://118.89.244.53:8080/index.php/home/api/close_sys"
+				)
+			    alert("系统将会关闭！");
+			}
+        }
+	</script>
+</head>
+<body>
+
+	<div class="htmleaf-container">
+		<div id="header">
+		<div id="main_content">
+		<header class="htmleaf-header">
+			<h1>环境检测系统数据展示 </h1>
+			<h1 id="note">
+				Data Notice Cards
+			</h1>
+		</header>
+		</div>
+		<div id="scendary_content">
+			<label>自动刷新：&nbsp;&nbsp;</label>
+			<button class="right" id="fresh" onclick="change_refresh()">开启</button>
+			<br/>
+			<label>更新时间：</label>
+			<label id="time" class="right">正在加载...</label>
+			<br/>
+			<label>强制关闭系统：</label>
+			<button class="right" onclick="close_sys()">关闭</button>
+		</div>
+		</div>
+		<div class="container">
+		  <ul class="card-list">
+		    <li class="card">
+		      <div class="card-color color-sunny">
+		        <div class="sunny"></div>
+		      </div>
+		      <div class="card-info">
+				  <p><span id="temp">63</span> ℃</p>
+		        <p>实时温度</p>
+		      </div>
+		    </li>
+		    <li class="card">
+		      <div class="card-color color-rain">
+		        <div class="rain"></div>
+		      </div>
+		      <div class="card-info">
+				  <p><span id="humid">77</span> %</p>
+		        <p>实时湿度</p>
+		      </div>
+		    </li>
+		    <li class="card">
+		      <div class="card-color color-moon">
+		        <div class="moon"></div>
+		      </div>
+		      <div class="card-info">
+				  <p><span id="pm">71</span> ug/m³</p>
+		        <p>实时pm2.5</p>
+		      </div>
+		    </li>
+
+		  </ul>
+	</div>
+	</div>
+
+	<div id="temp_chart" style="min-width: 310px; height: 400px; margin: 0 auto;max-width: 1125px"></div>
+	<div id="humid_chart" style="min-width: 310px; height: 400px; margin: 0 auto;margin-top: 250px;max-width: 1125px"></div>
+	<div id="pm25_chart" style="min-width: 310px; height: 400px; margin: 0 auto;margin-top: 0px;max-width: 1125px"></div>
+
+	<script type="text/javascript">
+		var data_array = ['Mon','Tues','Wed','Thurs','Fri','Sat','Sun'];
+		var temp_array = [];
+        var i;
+		var myDate = new Date();
+		day = myDate.getDay();
+        for(i = 0; i <7; i++)
+            temp_array[i] = data_array[(day-1+i)%7 ];
+        console.log(temp_array);
+        Highcharts.setOptions({
+            lang: {
+                noData: '暂无数据'
+            }
+        });
+        chart_temp = Highcharts.chart('temp_chart', {
+            chart: {
+                type: 'spline'
+            },
+			colors:['#ED561B'],
+            title: {
+                text: '周平均温度检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：温度'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + '°';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            series: [{
+                name: '温度',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+            }]
+        });
+
+        chart_humid = Highcharts.chart('humid_chart', {
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: '周平均湿度检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：湿度'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'humidity'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + '%';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            series: [{
+                name: '湿度',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+
+            }]
+        });
+
+        chart_pm25 = Highcharts.chart('pm25_chart', {
+            chart: {
+                type: 'spline'
+            },
+			colors:["#c0c0c0"],
+            title: {
+                text: '周平均PM2.5检测图'
+            },
+            subtitle: {
+                text: '城市环境检测：PM2.5'
+            },
+            xAxis: {
+                categories: temp_array
+            },
+            yAxis: {
+                title: {
+                    text: 'humidity'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + 'ug/m³';
+                    }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            series: [{
+                name: 'PM2.5',
+                marker: {
+                    symbol: 'square'
+                },
+                connectNulls:true
+
+            }]
+        });
+	</script>
+
+
+	
+</body>
+</html>

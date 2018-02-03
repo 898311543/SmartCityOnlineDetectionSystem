@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>环境检测系统数据展示</title>
+	<link type="text/css" rel="stylesheet" href="/Public/css/jquery-ui-1.10.3.custom.css">
+	<link rel="stylesheet" type="text/css" href="/Public/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" href="/Public/css/default.css">
+	<link rel="stylesheet" type="text/css" href="/Public/css/styles.css?v=20161231204527">
+
+
+	<script type="text/javascript" src="/Public/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/Public/javascript/jquery-ui-1.10.3.custom.min.js"></script>
+
+
+	<style>
+		body{
+			background-image: url("/Public/static/login_bg.jpg");
+			background-repeat: no-repeat;
+			background-attachment:fixed;
+			background-size:100% 100%;
+			-moz-background-size:35% 100%; /* 老版本的 Firefox */
+		}
+
+		#scendary_content label{
+			vertical-align: baseline;
+			font-family: "Lato", sans-serif;
+			font-size: 1.1em;
+			color: white;
+			line-height: 150%;
+		}
+		.card-list{
+			margin-top: 50px;
+		}
+
+		#header{
+			overflow: hidden;
+            width: 1090px;
+            height: 130px;
+            margin: 0 auto;
+            margin-top: 20px;
+		}
+		.html-header h1{
+			clear: both;
+            font-size: 3em;
+		}
+        .html-header{
+            text-align: left;
+        }
+		#main_content {
+			float: left;
+			background-color: transparent;
+			display: inline;
+		}
+		#scendary_content{
+			float: right;
+			width: 300px;
+			text-align: left;
+			display: inline;
+		}
+
+		button{
+			background-color: green;
+			color: white;
+
+		}
+        label{
+            white-space:nowrap;
+        }
+		#login_out{
+			/*float: right;*/
+		}
+		.clear{
+			clear: both;
+		}
+		#info{
+			color: red;
+			margin-top: 200px;
+		}
+	</style>
+	<link type="text/css" rel="stylesheet" href="/Public/css/style_login.css?v=24" />
+	<style type="text/css">
+		.tc{display: block;font-weight: 700;background:green;color: #fff;}
+		.tc a:hover{opacity: 0.6;}
+		a{color:blue}
+	</style>
+	<script type="text/javascript">
+        function getCookie(c_name)
+        {
+            if (document.cookie.length>0)
+            {
+                var c_start=document.cookie.indexOf(c_name + "=");
+                if (c_start!=-1)
+                {
+                    c_start=c_start + c_name.length+1;
+                    var c_end=document.cookie.indexOf(";",c_start);
+                    if (c_end==-1) c_end=document.cookie.length;
+                    return unescape(document.cookie.substring(c_start,c_end));
+                }
+            }
+            return ""
+        }
+
+        function refresh_status() {
+            if(getCookie("username") != 'admin') {
+                $(".admin").hide();
+                $("#login_out").show();
+            }
+            else {
+                $(".admin").show();
+                $("#login_out").hide();
+            }
+        }
+		$(document).ready(function () {
+            refresh_status();
+            $("#login_b").bind("click", function () {
+                $("#info").text("正在登录...");
+                $.ajax({
+                    url: '/index.php/home/api/login',
+                    type: 'POST',     // 请求类型，常用的有 GET 和 POST
+                    data: {
+                        'username': $("#name").val(),
+                        'password': $('#pass').val()
+                    },
+                    success: function (data) { // 接口调用成功回调函数
+                        if (data.status == 'success') {
+                            console.log(data);
+                            document.cookie = ("username=" + data.username);
+                            refresh_status();
+                            $("#gray").hide();
+                            $("#popup").hide();
+                            $("#info").text("登录成功！");
+                        }
+                        else {
+                            $("#info").text("用户名或者密码错误");
+                        }
+                    },
+                    async: true
+                });
+            });
+        });
+
+
+
+        var value = window.setInterval("get_data()",10000);
+        function  change_refresh() {
+			if($("#fresh").text() == "开启"){
+			    $("#fresh").text("关闭");
+			    window.clearInterval(value);
+			}
+			else if($("#fresh").text() == "关闭"){
+                $("#fresh").text("开启");
+                value = window.setInterval("get_data()",10000);
+			}
+        }
+        function close_sys() {
+			if(window.confirm('是否真的要关闭系统?')){
+			    $.get(
+			        "http://118.89.244.53:8080/index.php/home/api/close_sys"
+				)
+			    alert("系统将会关闭！");
+			}
+        }
+        function open_sys() {
+            if(window.confirm('是否真的要开启系统?')){
+                $.get(
+                    "http://118.89.244.53:8080/index.php/home/api/open_sys"
+                )
+                alert("系统将会开启！");
+            }
+        }
+
+	</script>
+	<script type="text/javascript">
+        $(function() {
+            $( "#tabs" ).tabs({
+                collapsible: false
+            });
+        });
+	</script>
+	<style type="text/css">
+        body{
+            min-width: 1025px;
+        }
+		#tabs_vertical{
+            width: 10px;
+			margin:0 auto;
+			background-color: transparent;
+		}
+
+        iframe {
+            width: 80%;
+            height: 1000px;
+            background-color: transparent;
+            margin-left: 200px;
+            float: left;
+        }
+        .ui-corner-left{
+            width: 5px;
+        }
+	</style>
+    <script>
+		function get_data() {
+			if($('iframe').attr('src') == "/index.php/home/index/present_data_display")
+                $('iframe').attr('src',"/index.php/home/index/present_data_display");
+        }
+        function showCurrentTab(activeTab,ui){
+            if(ui.newTab.index() == 1){
+                $("#iframe").attr('src', '/index.php/home/index/history_data');
+            }
+            if(ui.newTab.index() == 0){
+                $("#iframe").attr('src', '/index.php/home/index/present_data_display');
+            }
+            if(ui.newTab.index() == 2){
+                $("#iframe").attr('src', '/index.php/home/index/machine_manager');
+            }
+        }
+        $(document).ready(function() {
+            $("#iframe").attr('src', '/index.php/home/index/present_data_display');
+            $( "#tabs_vertical").tabs({
+                border:false,
+                activate:function(event,ui){
+                    var $activeTab = $('#tabs').tabs('option', 'active');
+                    showCurrentTab($activeTab,ui);
+                }
+            });
+
+            $( "#tabs_vertical").addClass( "ui-tabs-vertical ui-helper-clearfix" );
+            $( "#tabs_vertical li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+        });
+
+    </script>
+    <style>
+        .ui-tabs-vertical { width: 55em; }
+        .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+        .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+        .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+        .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
+        .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+        #tabs_vertical{
+            width:5px;
+            display: block;
+            float: left;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="htmleaf-container">
+		<div id="header">
+		<div id="main_content">
+		<header class="html-header">
+            <h1>环境检测系统数据展示 </h1>
+		</header>
+		</div>
+		<div id="scendary_content">
+			<button class="tc" id="login_out">登录后台管理页面</button>
+			<div class="clear"></div>
+			<label>自动刷新：&nbsp;&nbsp;</label>
+			<button class="right" id="fresh" onclick="change_refresh()">开启</button>
+			<br/>
+			<div class="admin">
+			<label>强制关闭系统：</label>
+			<button class="right" onclick="close_sys()">关闭</button>
+				<button class="right" onclick="open_sys()">开启</button>
+			</div>
+			<br/>
+		</div>
+        </div>
+	<div id="tabs_vertical">
+		<ul>
+			<li><a href="javascript:void(0)" rel="/index.php/home/index/present_data_display" class="tabref">实时检测</a></li>
+			<li><a href="javascript:void(0)" rel="/index.php/home/index/history_data" class="tabref">检测曲线</a></li>
+			<!--<li><a href="javascript:void(0)" rel="/index.php/home/index/machine_manager"class="tabref">设备管理</a></li>-->
+		</ul>
+
+	</div>
+    <iframe id="iframe" allowTransparency="true" frameBorder="0" scrolling="no"></iframe>
+    <!--<iframe id="chart_display" src="/index.php/home/index/weekly_average"  allowTransparency="true" frameBorder="0" scrolling="no"></iframe>-->
+    <!--<iframe id="present_data_display" src="/index.php/home/index/present_data_display"  allowTransparency="true" frameBorder="0" scrolling="no"></iframe>-->
+	<div id="login_section">
+	<div class="popup" id="popup">
+		<div class="top_nav" id='top_nav'>
+			<div align="center">
+				<span>用户登录</span>
+				<a class="guanbi"></a>
+			</div>
+		</div>
+		<div class="min">
+			<div class="tc_login">
+				<div class="right">
+					<form method="POST" name="form_login" target="_top">
+						<div align="center">
+							<input type="text" name="name" id="name" required="required" placeholder="用户名" autocomplete="off" class="input_yh">
+							<input type="password" name="pass" id="pass" required="required" placeholder="密码" autocomplete="off" class="input_mm">
+						</div>
+						<div id="hovertreedd">
+							<div align="center"><a href="" target="_blank">遇到登录问题</a></div>
+						</div>
+						<div align="center">
+							<input type="button" class="button" id='login_b' title="Sign In" value="登录">
+						</div>
+					</form>
+					<div id="hovertreedd">
+						<div align="center"><a href="" target="_blank">立即注册</a></div>
+					</div>
+					<hr align="center" />
+					<div id="info"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+
+	<script type="text/javascript">
+        //窗口效果
+        //点击登录class为tc 显示
+        $(".tc").click(function(){
+            $("#gray").show();
+            $("#popup").show();//查找ID为popup的DIV show()显示#gray
+            tc_center();
+        });
+        //点击关闭按钮
+        $("a.guanbi").click(function(){
+            $("#gray").hide();
+            $("#popup").hide();//查找ID为popup的DIV hide()隐藏
+        })
+
+        //窗口水平居中
+        $(window).resize(function(){
+            tc_center();
+        });
+
+        function tc_center(){
+            var _top=($(window).height()-$(".popup").height())/2;
+            var _left=($(window).width()-$(".popup").width())/2;
+
+            $(".popup").css({top:_top,left:_left});
+        }
+	</script>
+
+	<script type="text/javascript">
+        $(document).ready(function(){
+
+            $(".top_nav").mousedown(function(e){
+                $(this).css("cursor","move");//改变鼠标指针的形状
+                var offset = $(this).offset();//DIV在页面的位置
+                var x = e.pageX - offset.left;//获得鼠标指针离DIV元素左边界的距离
+                var y = e.pageY - offset.top;//获得鼠标指针离DIV元素上边界的距离
+                $(document).bind("mousemove",function(ev){ //绑定鼠标的移动事件，因为光标在DIV元素外面也要有效果，所以要用doucment的事件，而不用DIV元素的事件
+
+                    $(".popup").stop();//加上这个之后
+
+                    var _x = ev.pageX - x;//获得X轴方向移动的值
+                    var _y = ev.pageY - y;//获得Y轴方向移动的值
+
+                    $(".popup").animate({left:_x+"px",top:_y+"px"},10);
+                });
+
+            });
+
+            $(document).mouseup(function() {
+                $(".popup").css("cursor","default");
+                $(this).unbind("mousemove");
+            });
+        })
+	</script>
+
+
+
+</body>
+</html>
